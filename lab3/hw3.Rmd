@@ -57,17 +57,17 @@ mountains$fatalities<- c(344,100,50,20,20 )
 
 **7. What is the fatality rate (i.e., fatalities divided by summits) for each mountain? Create a new vector `fatality_rate` and add it to the `mountains` data frame.**
 ```{r}
-mountains$fatality_rate<- c(0.03, 0.13, )
+mountains$fatality_rate<- c(0.03, 0.13,0.16, 0.02, 0.06 )
 ```
 
 **8. Write your data frame to a .csv file called `mountains_data`.**
 ```{r}
-
+write.csv(mountains,"mountains_data", row.names=FALSE)
 ```
 
 **9. Clear your environment panel by clicking on the broom icon. Then read in your `mountains_data.csv` file to a new object called `mountains`.**
 ```{r}
-
+mountains<- read.csv("mountains_data.csv")
 ```
 
 ```{r}
@@ -76,7 +76,7 @@ mountains$fatality_rate<- c(0.03, 0.13, )
 
 **10. Use a summary function of your choice to show the structure of your `mountains` data frame.**
 ```{r}
-
+summary(mountains)
 ```
 
 ## Knit and Upload
