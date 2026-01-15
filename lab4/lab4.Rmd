@@ -215,7 +215,8 @@ geom_bar(mapping=aes())
 ```{r}
 ggplot(data=penguins,
        mapping=aes(x=island))+
-geom_bar(mapping=aes(fill=species))
+geom_bar(mapping=aes(fill=species), position= "dodge")
+labs(title= "number of penguins for each species by island")
 ```
 
 ## Wrap-up  
