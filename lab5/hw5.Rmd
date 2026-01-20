@@ -23,7 +23,7 @@ Data: http://datadryad.org/resource/doi:10.5061/dryad.q5j65/1
 
 **1. Load the data into a new object called `homerange`.**
 ```{r}
-homerange<- read.csv("~/Desktop/BIS15L_W26_Mlastres/lab5/data/Tamburelloetal_HomeRangeDatabase.csv")
+homerange<- read.csv("/Users/Miala/OneDrive/Desktop/BIS15L_W26_Mlastres/lab5/data/Tamburelloetal_HomeRangeDatabase.csv")
 ```
 
 **2. What is the structure of the `homerange` data? Does it have any NA's? Do a quick exploratory analysis of your choice below.**
@@ -59,6 +59,7 @@ ggplot(data=homerange,
 ```{r}
 homerange %>% 
   select(common.name, order, mean.hra.m2, mean.mass.g) %>% 
+  filter(mean.hra.m2 >=1000000) %>% 
   arrange(desc(mean.hra.m2)) %>% 
 slice_head(n=10)
 ```
@@ -81,19 +82,41 @@ slice_head
 **7. Which carnivorous mammals have the largest homeranges?**
 ```{r}
 homerange %>% 
-  select(common.name, order, mean.hra.m2, mean.mass.g) %>% 
-  arrange(desc(mean.hra.m2)) %>% 
-slice_head(n=10)
+  select(trophic.guild, mean.hra.m2) %>% 
+  filter(trophic.guild!= "herbivore") %>% 
+  arrange(desc(mean.hra.m2)) 
+```
+```{r}
+names(homerange)
 ```
 
 **8. Is there a relationship between body mass and homerange size? Make a scatterplot to show this relationship. Be sure to include appropriate labels and a title.**
 ```{r}
-
+ggplot(data=homerange,
+       mapping= aes(x=mean.mass.g, y=mean.hra.m2))+
+  geom_point(mapping = aes(color=))+
+   scale_y_log10()+
+   scale_x_log10()+
+   geom_smooth(method=lm, se=T)+
+  labs(title = "mass vs homerange")
+ 
 ```
 
 **9. Use filter to extract the data for only birds and mammals. Then make a plot that compares the homerange sizes of these two groups. Be sure to include appropriate labels and a title.**
 ```{r}
-
+homerange %>% 
+  select(species) %>% 
+  filter(species == "birds", "mammals")
+  
+```
+```{r}
+ ggplot(data=homerange,
+       mapping= aes(x=mean.mass.g, y=mean.hra.m2))+
+  geom_point(mapping = aes(color=))+
+   scale_y_log10()+
+   scale_x_log10()+
+   geom_smooth(method=lm, se=T)+
+  labs(title = "mass vs homerange")
 ```
 
 **10. Do one additional exploratory analysis of your choice. Before writing the code, write the question you are trying to answer. The question should be biologically meaningful and appropriate for the data. It must include at least one `filter()`, `select()`, and `arrange()`.**
