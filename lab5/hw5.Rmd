@@ -104,24 +104,32 @@ ggplot(data=homerange,
 
 **9. Use filter to extract the data for only birds and mammals. Then make a plot that compares the homerange sizes of these two groups. Be sure to include appropriate labels and a title.**
 ```{r}
-homerange %>% 
-  select(species) %>% 
-  filter(species == "birds", "mammals")
+homerange_birds_mammal<- homerange %>% 
+  select(class, mean.hra.m2) %>% 
+filter(class == "mammalia" |class== "aves")
   
 ```
 ```{r}
- ggplot(data=homerange,
-       mapping= aes(x=mean.mass.g, y=mean.hra.m2))+
-  geom_point(mapping = aes(color=))+
+ ggplot(data=homerange_birds_mammal,
+       mapping= aes(x=class, y=mean.hra.m2))+
+  geom_boxplot(mapping = aes(color=class))+
    scale_y_log10()+
-   scale_x_log10()+
-   geom_smooth(method=lm, se=T)+
-  labs(title = "mass vs homerange")
+labs(title = "")
 ```
 
 **10. Do one additional exploratory analysis of your choice. Before writing the code, write the question you are trying to answer. The question should be biologically meaningful and appropriate for the data. It must include at least one `filter()`, `select()`, and `arrange()`.**
+comparison between the total mass of bodyweight between mammalia and reptilia
 ```{r}
-
+ homerange_mandr<- homerange %>% 
+  select(class, mean.mass.g) %>% 
+filter(class == "mammalia" |class== "reptilia")
+```
+```{r}
+ggplot(data=homerange_mandr,
+       mapping= aes(x=class, y=mean.mass.g))+
+  geom_boxplot(mapping = aes(color=class))+
+   scale_y_log10()+
+labs(title = "")
 ```
 
 ## Knit and Upload
