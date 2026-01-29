@@ -1,6 +1,6 @@
 ---
 title: "Midterm 1 W26"
-author: "Your Name Here"
+author: "Mia Lastres"
 date: "`r Sys.Date()`"
 output:
   html_document: default
@@ -29,11 +29,8 @@ library(janitor)
 **Question 1. (3 points) Before you start analyzing data, please put a link to your GitHub repository below. Your repository should have a clear README and be well-organized. Add `jmledford3115` and `bryshalm` as collaborators to your repository if you haven't already done so.**  
 
 Link to repository:
-\
-\
-\
-\
-\
+
+https://github.com/mlastres/BIS15L_W26_Mlastres 
 
 ## Part 2: Data and Analysis
 
@@ -51,102 +48,181 @@ The variables include:
 - `island`: Island where the lizard was found.  
 
 **Question 2. (2 points) Load the data and store it as an object called `anolis`.**
-\
-\
-\
-\
-\
+
+```{r}
+anolis<- read_csv("~/Desktop/BIS15L_W26_Mlastres/midterm1/data/anolis_dat.csv")
+```
+
 
 **Question 3. (2 points) Use a summary function of your choice to get an idea of the structure of the data.**
-\
-\
-\
-\
-\
+
+```{r}
+summary(anolis)
+```
+
 
 **Question 4. (2 points) Clean the variable names so they are all lowercase and without special characters or spaces. Be sure to use the cleaned data for all subsequent analyses.**
-\
-\
-\
-\
-\
+
+```{r}
+anolis<- clean_names(anolis)
+```
+
+```{r}
+anolis <- anolis %>% 
+  mutate(across(where(is.character), tolower))
+```
+
+```{r}
+summary(anolis)
+```
 
 **Question 5. (4 points) Convert the `habitat` and `island` variables to factors.**
-\
-\
-\
-\
-\
+
+```{r}
+anolis<- anolis %>% 
+mutate(habitat=as.factor(habitat),
+       island=as.factor(island))
+```
+
+```{r}
+glimpse(anolis)
+```
+
 
 **Question 6. (2 points) Anole species were sampled from multiple islands. Which islands are represented in the data? Display the island names.**
-\
-\
-\
-\
-\
+
+```{r}
+anolis %>% 
+  select(island, species) %>% 
+count(island, sort= T)
+```
+the islands represented are cuba, hispaniola, puerto rico, and jamaica
 
 **Question 7. (4 points) Is sampling equal across islands? Create a plot to visualize the number of anole species sampled from each island. Be sure to label your axes and add a title.**
-\
-\
-\
-\
-\
-
+```{r}
+anolis %>% 
+  select(species, island) %>% 
+  ggplot(mapping = aes(x=island))+
+  geom_bar(mapping = aes(fill= island))+
+  labs(title = "Number of Anole Species in Each Island", x= "Island", y= "Number of Anole species")
+```
+sampling across islands is not equal, cuba has the largest sampled species in the dataset.
 **Question 8. (2 points) Which habitat types are represented in the data? Display the names of the habitat types.**
-\
-\
-\
-\
-\
+
+```{r}
+anolis %>% 
+  select(habitat) %>% 
+  count(habitat, sort=T)
+```
+trunk-groud, grass-bush, trunkcrown, and twig are all represented in the data
 
 **Question 9. (4 points) Is sampling equal across habitat types? Create a plot to visualize the number of anole species sampled from each habitat type. Be sure to label your axes and add a title.**
-\
-\
-\
-\
-\
+
+```{r}
+anolis %>% 
+  select(species, habitat) %>% 
+  ggplot(mapping = aes(x=habitat))+
+  geom_bar(mapping = aes(fill= habitat))+
+  labs(title = "Number of Anole Species in Each Habitat", x= "Habitat", y= "Number of Anole species")
+```
+
+sampling is not even, the trunk-ground habitat had the most species sample
 
 **Question 10. (4 points) The morphology of anoles varies based on their habitat. How does the range of hindlimb length compare among different habitats? Create a plot to visualize the distribution of hindlimb lengths across habitat types. Be sure to label your axes and add a title.**
-\
-\
-\
-\
-\
+
+```{r}
+anolis %>% 
+  select(hindlimb_length_mm, habitat) %>% 
+  ggplot(mapping = aes(x=habitat, y= hindlimb_length_mm))+
+  geom_boxplot(mapping = aes(color=habitat))+
+  labs(title = "Hindlimb Length (mm) in relation to habitat ", x= "Habitat", y= "Hindlimb Length (mm)")
+```
+higher hindlimb legs come from the habitats relating to the trunks, both ground and crown.
 
 **Question 11. (4 points) The plot above is compelling, but don't we expect larger lizards to have longer limbs? What about tail length? Shouldn't longer lizards have longer tails? To correct for this, make two new columns: 1. `ratio_of_hindlimb_to_body`, and 2. `ratio_of_tail_to_body`. Don't forget to add these columns to the anolis data frame.**
-\
-\
-\
-\
-\
+
+```{r}
+anolis_ratio<- anolis %>% 
+  select(hindlimb_length_mm, body_length_mm, tail_length_mm, habitat) %>% 
+summarize(ratio_hindlimb_to_body= hindlimb_length_mm/tail_length_mm,
+            ratio_of_tail_to_bodytail=hindlimb_length_mm/body_length_mm,
+          habitat= habitat)
+#im not quite sure how to add it to the dataframe i am so sorry
+```
+
+```{r}
+anolis_ratio
+```
+
 
 **Question 12. (4 points) Create a new plot that examines the distribution of `ratio_of_hindlimb_to_body` across habitat types. How does this plot differ from the one you made in Problem 10?  Be sure to label your axes and add a title.**
-\
-\
-\
-\
-\
+
+```{r}
+anolis_ratio %>% 
+  select(ratio_hindlimb_to_body, habitat) %>% 
+  ggplot(mapping=aes(x= habitat, y= ratio_hindlimb_to_body))+
+  geom_boxplot(mapping = aes(colour = habitat))+
+  labs(title = "ratio for every habitat", y= "hind limb to body ratio", x= "habitat")
+```
+ the twig ratio is much higher than whre it was in plot 10 which means that teh ratio of hindlimb length is proportunate to size as well as habitat  
 
 **Problem 13. (4 points) A longer tail provides better balance and agility. Create a plot that examines the relationship between body length and tail length. Color the points by habitat type and add a line of best fit. What does this plot suggest about the relationship between body length and tail length? What do you notice about lizards in the `Grass-bush` habitat? Be sure to label your axes and add a title.**
-\
-\
-\
-\
-\
+
+```{r}
+anolis %>% 
+  select(body_length_mm, tail_length_mm, habitat) %>% 
+  ggplot(mapping=aes(x= body_length_mm, y= tail_length_mm))+
+  geom_point(mapping = aes(colour = habitat))+
+geom_smooth(method = lm, se = T)+
+  labs(title = "body length (mm) vs. tail length (mm)", x= "Body Length (mm)", y= "tail Length (mm)")
+```
+the plot suggests that lizards tend to have larger tails overall, but lizards in habitats that typically require higher dexterity will have a larger tail to help provide it tht balance and dextarity.
+the grass bush lizards tend to have a much larger tail lengths  and a much smaller body lengths in comparison to its tail length, especially compared to every ther species, it has the lowest body length while in the middle/ laarger tail length area.
 
 **Problem 14. (4 points) Toepad lamellae are transverse, plate-like structures found on the ventral surface of the digits. They are a key adaptation that allows anoles to cling to and move efficiently on smooth and vertical surfaces. What is the mean number of toepad lamellae for each habitat type?**
-\
-\
-\
-\
-\
+
+```{r}
+anolis %>% 
+  select(habitat, toepad_lamellae_count) %>% 
+  filter(habitat== "trunk-ground") %>% 
+mutate(toepad_lamellae_count_mean= mean(toepad_lamellae_count))
+```
+
+```{r}
+anolis %>% 
+  select(habitat, toepad_lamellae_count) %>% 
+  filter(habitat== "grass-bush") %>% 
+mutate(toepad_lamellae_count_mean= mean(toepad_lamellae_count))
+```
+
+```{r}
+anolis %>% 
+  select(habitat, toepad_lamellae_count) %>% 
+  filter(habitat== "trunk-crown") %>% 
+mutate(toepad_lamellae_count_mean= mean(toepad_lamellae_count))
+```
+
+```{r}
+anolis %>% 
+  select(habitat, toepad_lamellae_count) %>% 
+  filter(habitat== "twig") %>% 
+mutate(toepad_lamellae_count_mean= mean(toepad_lamellae_count))
+```
+
+grass-bush mean is 28.3125, twig mean is 27.6, trunk- crown is 38.5, trunk ground is 29.95652
 
 **Problem 15. (5 points) The number of toepad lamellae is significantly different for trunk-crown species. But, is this consistent across all islands? Make a plot that shows the range in number of toepad lamellae by island for trunk-crown species only. Be sure to label your axes and add a title.**
-\
-\
-\
-\
-\
+
+```{r}
+anolis %>% 
+  select(toepad_lamellae_count, island, habitat) %>% 
+  filter(habitat== "trunk-crown") %>% 
+  ggplot(mapping = aes(y=toepad_lamellae_count, x= island))+
+  geom_boxplot(mapping = aes(color= habitat))+
+  labs(title = "toebads of trunk-crown habitat on each island", x= "island", y= "toebad count")
+```
+
+it is not concistant across eah island, the toepad count is highest in cuba and lowest in puerto rico. 
 
 ## Submit the Midterm
 1. Save your work and knit the .rmd file.  
