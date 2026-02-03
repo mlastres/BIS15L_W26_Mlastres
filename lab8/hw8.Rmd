@@ -61,27 +61,50 @@ select(country) %>%
 5. The variables `common_name` and `taxonomic_code` both refer to species. How many unique species are represented in the data based on each of these variables? Are the numbers the same or different?
 ```{r}
 fisheries_clean %>% 
-  select(common_name, taxonomic_code)
+select(common_name) %>% 
+  summarise(number_of_sepcies= n_distinct(common_name))
+
+  
 ```
 
 6. In 2023, what were the top five countries that had the highest overall catch?
 ```{r}
-
+ fisheries_clean %>% 
+  filter(period=="2023") %>% 
+  group_by(country) %>% 
+  summarise(avg_catch=sum(catch, na.rm=T)) %>% 
+  arrange(desc(avg_catch))
+  
+  
 ```
 
 7. In 2023, what were the top 10 most caught species? To keep things simple, assume `common_name` is sufficient to identify species. What does `NEI` stand for in some of the common names? How might this be concerning from a fisheries management perspective?
 ```{r}
-
+ fisheries_clean %>% 
+  filter(period=="2023") %>% 
+  group_by(common_name) %>% 
+  summarise(number_caught=sum(catch)) %>% 
+  arrange(desc(number_caught))
 ```
-
+NEI means, not elsewhere included,
 8. For the species that was caught the most above (not NEI), which country had the highest catch in 2023?
 ```{r}
-
+ fisheries_clean %>% 
+  filter(period=="2023", common_name=="Alaska pollock(=Walleye poll.)") %>% 
+  group_by(country) %>% 
+  summarise(number_caught=sum(catch)) %>% 
+  arrange(desc(number_caught))
 ```
+russian federation caught the most alaska polluck
 
 9. How has fishing of this species changed over the last decade (2013-2023)? Create a  plot showing total catch by year for this species.
 ```{r}
-
+ fisheries_clean %>% 
+  filter(period >= "2013", common_name=="Alaska pollock(=Walleye poll.)") %>%
+  group_by(country) %>% 
+  summarise(number_caught=sum(catch)) %>% 
+ggplot(mapping=aes(x=period, y=catch))+
+  geom_bar()
 ```
 
 10. Perform one exploratory analysis of your choice. Make sure to clearly state the question you are asking before writing any code.
