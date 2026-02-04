@@ -15,7 +15,7 @@ Answer the following questions and/or complete the exercises in RMarkdown. Pleas
 ```{r message=FALSE, warning=FALSE}
 library("tidyverse")
 library("janitor")
-library("naniar")
+#library("naniar")
 options(scipen = 999)
 ```
 
@@ -103,17 +103,23 @@ russian federation caught the most alaska polluck
 
 ```{r}
   fisheries_clean %>% 
-  select(period, catch, common_name) %>% 
-  filter(period>= "2013", common_name=="Alaska pollock(=Walleye poll.)") %>% 
- 
-  ggplot(mapping = aes(x=period))+
-  geom_bar()
+  filter(period >= "2013",common_name== "Alaska pollock(=walleye poll.)") %>% 
+  group_by(period) %>% 
+  summarize(total_catch=sum(catch)) %>% 
+  ggplot
+  
 ```
 
 ```{r}
  fisheries_clean %>% 
   select(period, common_name, catch) %>% 
-  filter(period >= "2013", common_name=="Alaska pollock(=Walleye poll.)")
+  filter(period >= "2013", common_name=="Alaska pollock(=Walleye poll.)") %>% 
+  group_by(period) %>% 
+  summarize(Catch_sum= sum(catch)) %>% 
+  ggplot(mapping = aes(x=period, y= Catch_sum))+
+  geom_col(mapping = aes(fill=period))+
+  labs(title = "Sum of alaska pollock per year (2013-2023", x="Period", y= "Number of Alaska pollock caught")
+
 
 ```
 
