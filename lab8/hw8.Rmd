@@ -89,7 +89,7 @@ select(common_name) %>%
 NEI means, not elsewhere included,
 8. For the species that was caught the most above (not NEI), which country had the highest catch in 2023?
 ```{r}
- fisheries_clean %>% 
+fisheries_clean %>% 
   filter(period=="2023", common_name=="Alaska pollock(=Walleye poll.)") %>% 
   group_by(country) %>% 
   summarise(number_caught=sum(catch)) %>% 
@@ -98,19 +98,47 @@ NEI means, not elsewhere included,
 russian federation caught the most alaska polluck
 
 9. How has fishing of this species changed over the last decade (2013-2023)? Create a  plot showing total catch by year for this species.
+
+
+
+```{r}
+  fisheries_clean %>% 
+  select(period, catch, common_name) %>% 
+  filter(period>= "2013", common_name=="Alaska pollock(=Walleye poll.)") %>% 
+ 
+  ggplot(mapping = aes(x=period))+
+  geom_bar()
+```
+
 ```{r}
  fisheries_clean %>% 
-  filter(period >= "2013", common_name=="Alaska pollock(=Walleye poll.)") %>%
-  group_by(country) %>% 
-  summarise(number_caught=sum(catch)) %>% 
-ggplot(mapping=aes(x=period, y=catch))+
-  geom_bar()
+  select(period, common_name, catch) %>% 
+  filter(period >= "2013", common_name=="Alaska pollock(=Walleye poll.)")
+
 ```
 
 10. Perform one exploratory analysis of your choice. Make sure to clearly state the question you are asking before writing any code.
 ```{r}
+names(fisheries_clean)
+```
+what year had the largest amount of fish caught, which country caught the most fish that year? 
+
+```{r}
+fisheries_clean %>% 
+  group_by(period) %>% 
+  summarise(avg_catch=sum(catch, na.rm=T)) %>% 
+  arrange(desc(avg_catch))
+  
 
 ```
+```{r}
+fisheries_clean %>% 
+  filter(period=="2018") %>% 
+  group_by(country) %>% 
+  summarise(avg_catch=sum(catch, na.rm=T)) %>% 
+  arrange(desc(avg_catch))
+  
+```
+china seems to be commonly the largest fish catching country, which makes sense for its size/population, as well as how much export it commonly has
 
-## Knit and Upload
 Please knit your work as an .html file and upload to Canvas. Homework is due before the start of the next lab. No late work is accepted. Make sure to use the formatting conventions of RMarkdown to make your report neat and clean!  
