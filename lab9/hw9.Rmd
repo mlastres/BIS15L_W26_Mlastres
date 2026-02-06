@@ -29,7 +29,7 @@ This homework loosely follows the tutorial of [R Ladies Sydney](https://rladiess
 
 1. Start by loading the data `sydneybeaches`. Do some exploratory analysis to get an idea of the data structure.
 ```{r}
-sydney_beach<- read_csv("~/Desktop/BIS15L_W26_Mlastres/lab9/data/sydneybeaches.csv")
+sydney_beach<- read_csv("C:/Users/Miala/OneDrive/Desktop/BIS15L_W26_Mlastres/lab9/data/sydneybeaches.csv")
 sydney_beach
 ```
 
@@ -61,8 +61,8 @@ sydneybeaches_wide %>%
 
 6. We haven't dealt much with dates yet, but separate the date into columns day, month, and year. Do this on the `sydneybeaches_long` data.
 ```{r}
-sydneybeach_long<- sydneybeach_long %>% 
-  separate(Date, into = c("day", "month", "year"), sep= "/")
+ sydneybeach_long<- sydneybeach_long %>% 
+  separate(Date, into = c("month", "day", "year"), sep= "/")
 ```
 
 7. What is the average `enterococci_cfu_100ml` by year for each beach. Think about which data you will use- long or wide.
@@ -71,34 +71,50 @@ sydneybeach_long<- sydneybeach_long %>%
  sydneybeach_long %>% 
   select(Site, year, `Enterococci (cfu/100ml)`) %>% 
   group_by(year, Site) %>% 
-  summarize( `Enterococci (cfu/100ml)`= mean(`Enterococci (cfu/100ml)`, na.rm=T))
+  summarize( `Enterococci (cfu/100ml)`= mean(`Enterococci (cfu/100ml)`, na.rm=T)) %>% 
+  
  
 ```
 
 8. Make the output from question 7 easier to read by pivoting it to wide format.
 ```{r}
 sydneybeach_long %>% 
-  separate(Date, into = c("day", "month", "year"), sep= "/") %>% 
-  pivot_wider(values_from = "Enterococci (cfu/100ml)",
-              names_from = "year")
+  select(Site, year, `Enterococci (cfu/100ml)`) %>% 
+  group_by(year, Site) %>% 
+  summarize( `Enterococci (cfu/100ml)`= mean(`Enterococci (cfu/100ml)`, na.rm=T)) %>% 
+  pivot_wider(names_from = "year",
+               values_from = "Enterococci (cfu/100ml)") 
   
 ```
 
 9. What was the most polluted beach in 2013?
 ```{r}
-
+sydneybeach_avg %>% 
+ select(Site, '2013') %>% 
+  arrange(desc('2013')) 
 ```
 
-```{r}
+little bay beach is the most polluted
 
-```
 
 10. Explore the data! Do one analysis of your choice that includes a minimum of three lines of code.  
 ```{r}
-sydney_beach %>% 
-  select(Site, Date, `Enterococci (cfu/100ml)`) %>% 
-  separate()
+sydney_beach_name<- sydney_beach %>% 
+  select(Site, Date, `Enterococci (cfu/100ml)` ) %>% 
+  mutate(enterococci=`Enterococci (cfu/100ml)`)
+  
 ```
+
+```{r}
+sydney_beach_name %>% 
+  select(Site,Date, enterococci) %>% 
+  separate(Date, into = c("month", "day", "year"), sep= "/") %>% 
+  group_by(Site, year) %>% 
+  summarize(enterococci_sum= sum(enterococci, na.rm=T))
+  
+  
+```
+
 
 ## Knit and Upload
 Please knit your work as an .html file and upload to Canvas. Homework is due before the start of the next lab. No late work is accepted. Make sure to use the formatting conventions of RMarkdown to make your report neat and clean!  
