@@ -71,7 +71,7 @@ sydneybeaches_wide %>%
  sydneybeach_long %>% 
   select(Site, year, `Enterococci (cfu/100ml)`) %>% 
   group_by(year, Site) %>% 
-  summarize( `Enterococci (cfu/100ml)`= mean(`Enterococci (cfu/100ml)`, na.rm=T)) %>% 
+  summarize( `Enterococci (cfu/100ml)`= mean(`Enterococci (cfu/100ml)`, na.rm=T)) 
   
  
 ```
@@ -85,6 +85,16 @@ sydneybeach_long %>%
   pivot_wider(names_from = "year",
                values_from = "Enterococci (cfu/100ml)") 
   
+```
+```{r}
+sydneybeach_avg<- sydneybeach_long %>% 
+  select(Site, year, `Enterococci (cfu/100ml)`) %>% 
+  group_by(year, Site) %>% 
+  summarize( `Enterococci (cfu/100ml)`= mean(`Enterococci (cfu/100ml)`, na.rm=T)) %>% 
+  pivot_wider(names_from = "year",
+               values_from = "Enterococci (cfu/100ml)") 
+  
+
 ```
 
 9. What was the most polluted beach in 2013?
