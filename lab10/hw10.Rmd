@@ -29,26 +29,45 @@ sharks <-
   read_csv("data/SharkIncidents_1950_2022_220302.csv", 
            na=c("NA", "N/A", "Unknown", "NOT COUNTED", "", " ")) %>% 
   clean_names()
+sharks
+```
+```{r}
+sharks %>% 
+ 
 ```
 
 ## Questions
 1. Are there any "hotspots" for shark incidents in California? Show the top five counties with the most incidents.
 ```{r}
-
+sharks %>%
+ select(county, incident_num) %>% 
+  count(county, sort=T) %>% 
+  arrange(desc(n)) %>% 
+ slice(1,2,3,4,5)
 ```
 
 2.  Make a plot that shows the total number of incidents per county.
 ```{r}
-
+sharks %>%
+  ggplot(aes(x=county, y= incident_num))+
+  geom_col()+
+  coord_flip()+
+  labs(title = "Total number of Incidents per county",
+       x= "County",
+       y= "Incidents")
 ```
 
 3. Are there months of the year when incidents are more likely to occur? Make a plot that shows the total number of incidents by month. Which month has the highest number of incidents?  
 ```{r}
-
+sharks %>% 
+  select(month, incident_num) %>% 
+  count(month, sort=T) %>% 
+  arrange(desc(month))
 ```
 
 ```{r}
-
+sharks %>% 
+  
 ```
 
 4. Is there a time of day when most attacks occur? Make a plot that shows the total number of incidents by time of day. Which time of day has the highest number of incidents?  
