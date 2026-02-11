@@ -116,10 +116,10 @@ sharks %>%
   select(mode, incident_num) %>% 
   count(mode, sort=T) %>% 
   ggplot(aes(x=mode, y= n))+
-  geom_col()+
+  geom_col(aes(fill = mode))+
   labs(title = "Incidents From Each Activity", 
-       x= "Incidents",
-       y= "Activities")+
+       y= "Incidents",
+       x= "Activities")+
   theme(axis.text.x=element_text(angle = 67, hjust= 1))
 ```
 
@@ -134,10 +134,10 @@ sharks %>%
 10. Are all incidents involving Great White's fatal? Make a plot that shows the number and types of incidents for Great White's only.  
 ```{r}
 sharks %>% 
-  select(incident_num, species, injury) %>% 
   filter(species=="White") %>% 
   ggplot(aes(x=injury, y=incident_num))+
-  geom_col()
+  geom_col(aes(fill= injury))+
+  labs(title = "Incidents from great white sharks and their severity", x= "Injury", y= "Incidents")
 ```
 
 ## Knit and Upload
