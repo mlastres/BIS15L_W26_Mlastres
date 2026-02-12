@@ -88,19 +88,32 @@ sharks %>%
 
 5. How do the number and types of injuries compare by county? Make a table that shows the number of injury types by county. Which county has the highest number incidents? (hint: your table should be in wide format)
 ```{r}
-sharks
+#sharks
 ```
 
 ```{r}
 sharks %>% 
   select(injury, county, incident_num) %>% 
-   pivot_wider(names_from = "county", 
-              values_from = "incident_num" )
+  group_by(county) %>% 
+  count(injury) %>% 
+  pivot_wider(names_from = "injury",
+              values_from = "n") 
+  
+  
+   
 ``` 
 
 6. Use the table from #5 to make a plot that shows the total number of incidents by county.
 ```{r}
-
+sharks %>% 
+   select(injury, county, incident_num) %>% 
+  ggplot(aes(x= county,))+
+  geom_bar(aes(fill = injury))+
+   theme(axis.text.x=element_text(angle = 67, hjust= 1))+
+  labs( title = "Incidents per county", 
+        x="County",
+        y="Incidents")
+  
 ```
 
 7. In the data, `mode` refers to a type of activity. Which activity is associated with the highest number of incidents?
@@ -135,8 +148,8 @@ sharks %>%
 ```{r}
 sharks %>% 
   filter(species=="White") %>% 
-  ggplot(aes(x=injury, y=incident_num))+
-  geom_col(aes(fill= injury))+
+  ggplot(aes(x=injury))+
+  geom_bar(aes(fill= injury) )+
   labs(title = "Incidents from great white sharks and their severity", x= "Injury", y= "Incidents")
 ```
 
