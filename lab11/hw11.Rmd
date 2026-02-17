@@ -134,25 +134,66 @@ gapminder %>%
 ```{r}
 gapminder %>% 
   select(gdp, country, year) %>% 
-  filter(year %in% c(1975, 2025)) %>% 
+  filter(year>=1975 & year<=2025,
+         country!= "Monaco") %>% 
+  pivot_wider(names_from = "year",
+              values_from = "gdp") %>% 
+  mutate(growth_gdp= `2025`-`1975`) %>% 
+  arrange(desc(growth_gdp)) %>% 
+  slice_head(n=5)
+  
+  
   
 ```
 
 9. How does per capita GDP growth compare between these same five countries over the past 50 years? Show this as a plot.
 ```{r}
-
+gapminder %>% 
+  filter( country== "Singapore"|
+         country== "Ireland"|
+         country== "Luxembourge"|
+         country== "Guyana"|
+         country=="Norway",
+         year>=1975 & year<=2025) %>% 
+  ggplot(aes(x=year, y= gdp, colour= country))+ 
+  geom_line()+
+  geom_point()+
+  labs(title = "GDP over the years for each country",
+       x="Years",
+       y= "GDP")
 ```
 
 10. Do one analysis of your choice that includes a table and plot as outputs.
 ```{r}
 gapminder %>% 
-  filter(year %in% c(2008, 2021)) %>% 
-  arrange(desc(pop))
-  
+  select(country, year, pop) %>% 
+  filter(year>=2000 & year<=2025,
+         country!= "Monaco") %>% 
+  pivot_wider(names_from = "year",
+              values_from = "pop") %>% 
+  mutate(growth_pop= `2025`-`2000`) %>% 
+  arrange(desc(growth_pop)) %>% 
+  slice_tail(n=5)
 ```
 
 ```{r}
-
+gapminder %>% 
+   select(country, year, pop) %>% 
+  filter(year>=2000 & year<=2025,
+         country!= "Monaco") %>% 
+  pivot_wider(names_from = "year",
+              values_from = "pop") %>% 
+  mutate(growth_pop= `2025`-`2000`) %>% 
+  arrange(desc(growth_pop)) %>% 
+  slice_tail(n=5) %>% 
+  pivot_longer(-c(growth_pop, country),
+               names_to = "year",
+               values_to = "pop") %>% 
+  ggplot(aes(x=year, y=pop, colour= country))+
+geom_line()+
+  geom_point()+
+  theme(axis.text.x= element_text(angle = 60, hjust= 1))
+  
 ```
 
 ## Knit and Upload
