@@ -30,6 +30,8 @@ gestation <- read_csv("data/Data_S1.csv") %>%
 
 ```{r}
 names(gestation)
+msleep %>% 
+  select(order)
 ```
 
 ## Aesthetics
@@ -37,7 +39,38 @@ There are many ways to adjust shiny apps for better visual appeal. Let's start w
 
 1. Build an app that allows users to select a mammalian `order` and a variable of interest (body mass, longevity, or gestation length) and then plots the density distribution of that variable for the selected order.
 ```{r, eval=F, echo=T}
+library(shiny)
 
+ui <- fluidPage(
+  
+  selectInput("x",
+              "select order",
+              choices = sort(unique(gestation$order)),
+              selected = "Afrosoricida"),
+  
+  selectInput("y",
+              "select interest variable",
+              choices = c("bodymass",
+              "longevity",
+              "gestationlength"),
+              selected = "bodymass"),
+  plotOutput("plot", width = "600px", height = "500px")
+)
+
+server <- function(input, output, session) {
+  output$plot <-renderPlot({ 
+    gestation %>% 
+      filter(input$x==.data[["order"]]) %>% 
+      ggplot(aes(.data[[input$y]]))+
+      geom_density(fill="yellow",
+                   color="tomato",
+                   alpha=0.6)+
+      theme_minimal()
+    
+  })
+}
+
+shinyApp(ui, server)
 ```
 
 ## ui Layout with `shinydashboard`
@@ -63,12 +96,85 @@ shinyApp(ui, server)
 
 Let's add our ui and server elements to make a functional dashboard. We will put our ui elements in the `dashboardBody()`. For now, we will turn off the sidebar.
 ```{r, eval=F, echo=T}
+library(shiny)
 
+ui <- dashboardPage(
+  dashboardHeader(title = "Distribution of Gestation Length by order"),
+  dashboardSidebar(disable = T),
+  dashboardBody(
+      
+  selectInput("x",
+              "select order",
+              choices = sort(unique(gestation$order)),
+              selected = "Afrosoricida"),
+   selectInput("y",
+              "select interest variable",
+              choices = c("bodymass",
+              "longevity",
+              "gestationlength"),
+              selected = "bodymass"),
+ plotOutput("plot", width = "600px", height = "500px")
+  
+    
+  )
+  
+)
+
+server <- function(input, output, session) {
+  
+   output$plot <-renderPlot({ 
+    gestation %>% 
+      filter(input$x==.data[["order"]]) %>% 
+      ggplot(aes(.data[[input$y]]))+
+      geom_density(fill="yellow",
+                   color="tomato",
+                   alpha=0.6)+
+      theme_minimal()
+})
+}
+shinyApp(ui, server)
 ```
 
 Now let's add our server functions.
 ```{r, eval=F, echo=T}
+ui <- dashboardPage(
+  dashboardHeader(title = "Distribution of Gestation Length by order"),
+  
+  dashboardSidebar(
+  
+      
+  selectInput("x",
+              "select order",
+              choices = sort(unique(gestation$order)),
+              selected = "Afrosoricida"),
+  
+   selectInput("y",
+              "select interest variable",
+              choices = c("bodymass",
+              "longevity",
+              "gestationlength"),
+              selected = "gestationlength")),
+  
+  
+   dashboardBody(
+    plotOutput("plot", width = "600px", height = "500px")
+  )
+  
+)
 
+server <- function(input, output, session) {
+  output$plot <-renderPlot({ 
+    gestation %>% 
+      filter(input$x==.data[["order"]]) %>% 
+      ggplot(aes(.data[[input$y]]))+
+      geom_density(fill="yellow",
+                   color="tomato",
+                   alpha=0.6)+
+      theme_minimal()
+})
+}
+
+shinyApp(ui, server)
 ```
 
 What if you want to turn on the sidebar and put the inputs there? We can do that by moving the `selectInput()` functions to the `dashboardSidebar()`.
@@ -89,6 +195,11 @@ wolves <- read_csv("data/wolves_data/wolves_dataset.csv") %>% clean_names()
 ```{r}
 names(wolves)
 ```
+```{r}
+wolves %>% 
+  select(pop)
+```
+
 
 2. For the app, here is a faceted version of what we are looking for. We want the reactive part to be `pop` and you should try to use `shinydashboard`.
 ```{r}
@@ -100,7 +211,39 @@ wolves %>%
 ```
 
 ```{r, eval=F, echo=T}
+library(shiny)
 
+ui <- dashboardPage(
+  
+dashboardHeader ( title ="Sex Composition of Wolf species"),
+
+dashboardSidebar(
+                       
+  selectInput("x",
+              "select population",
+             choices = sort(unique(wolves$pop)),
+  selected ="AK.PEN")
+),
+  
+  dashboardBody(
+    plotOutput("plot", width = "500px", height = "600px")
+  )
+
+)
+
+server <- function(input, output, session) {
+  output$plot <- renderPlot({
+    
+    wolves %>% 
+      filter(pop== input$x) %>% 
+      ggplot(aes(x=sex, fill = sex))+
+      geom_bar(color="tomato")+
+      theme_minimal()
+    
+  })
+}
+
+shinyApp(ui, server)
 ```
 
 -->[Home](https://jmledford3115.github.io/datascibiol/)
