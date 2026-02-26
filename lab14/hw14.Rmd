@@ -65,20 +65,43 @@ ggmap(map)+
 4. Build a map that only shows the fatalities.  
 ```{r}
 ggmap(map)+
-  geom_point(data =sharks,
+  geom_point(data =sharks %>%
              filter(injury == "fatal"), 
              aes(longitude, latitude), size=0.75, alpha=0.85)
 ```
 
 5. Build the same map (fatalities only), but this time make it interactive using `leaflet`. Also, color the points red.  
 ```{r}
+```{r}
 ggmap(map)+
-  geom_point(data = sharks aes(longitude, latitude), size=0.75, alpha=0.85)
+  geom_point(data =sharks %>%
+             filter(injury == "fatal"), 
+             aes(longitude, latitude), size=0.75, alpha=0.85)
 ```
 
 6. Which county has the highest number of recorded shark attacks? Make a map that only shows the attacks in this county. (hint: it may help improve the map if you remove duplicate locations, i.e. multiple attacks at the same location.)
 ```{r}
+lon_min<- -124.7
+lon_max<- -117.1
+lat_min<- 32.59
+lat_max<- 41.56
+```
 
+
+```{r}
+leaflet(sharks %>%
+             filter(injury == "fatal")) %>% 
+  addProviderTiles(providers$Stadia.StamenTerrain) %>% 
+  addCircleMarkers(
+    lng = ~longitude,
+    lat = ~latitude,
+    radius=2,
+    stroke = F,
+    fillOpacity = 0.7
+  ) %>% 
+  addScaleBar(position="bottomleft") %>% 
+  fitBounds(lng1 = lon_min, lat1 = lat_min,
+            lng2 = lon_max, lat2 = lat_max)
 ```
 
 ## Knit and Upload
