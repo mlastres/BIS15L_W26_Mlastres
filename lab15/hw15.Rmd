@@ -30,7 +30,31 @@ elephants <- read_csv("data/elephants_data/elephants.csv") %>%
 
 1. There are only three variables in the data. Two are continuous (age, height) and one is categorical (sex). Build an app that compares the range of age and height by sex. Users should be able to select either age or height. Make the app neat, clean, and professional. Use `shinydashboard` to improve the aesthetics of your app.
 ```{r, eval=F, echo=T}
+library(shiny)
 
+ui <- fluidPage(
+              
+  selectInput("y",
+              "select sex variable", 
+              choices = c("height",
+                          "age"),
+              selected = "age"),
+  
+  plotOutput("plot", width="600px", height = "500px")
+)
+
+server <- function(input, output, session) {
+   output$plot <- renderPlot({
+  elephants %>% 
+    ggplot(aes(x=sex,
+                 y= .data[[input$y]],))+
+             geom_boxplot(aes(fill = sex))+
+       labs(title = "Elephant Range of Age or Height by sex",
+            x= "Sex")
+   })
+}
+
+shinyApp(ui, server)
 ```
 
 2. In addition to the .Rmd file, save your app as a standalone R script called `elephants.csv`.
