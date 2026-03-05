@@ -164,21 +164,25 @@ polar_bears<- polar_bears %>%
 ```
 
 ```{r}
- polar_bears %>% #literally all i needed for this bit was a tilde, i added it in.. so sorry
-  mutate(fasting= case_when(un_creat_ratio <= 10~ "fasting"))
+ polar_bears<- polar_bears %>% 
+  mutate(fasting= case_when(un_creat_ratio <= 10~ "fasting",
+                   un_creat_ratio > 10~ "not_fasting"))
 ```
 
 
 
 8. (6 points) The authors found that the number of fasting bears increased in the SB population but decreased in the CS population. Make a plot(s) that shows the number of fasting bears by year for both populations to visualize this trend.
 
-i couldnt figure out case_when, but this is what my graoh code MIGHT look like if i did figure it out :)
+
 ```{r}
-#polar_bears
-#select(fasting, year, popn) %>% 
- #ggplot(aes(x=year, y= fasting)) +
-  #geom_col(aes(fill = popn), position = dodge)+
-  #labs(title = "Number of bears fasting each year (per population)")
+polar_bears %>% 
+  filter(fasting=="fasting") %>% 
+  group_by(year, popn) %>% 
+  summarise(count=n()) %>% 
+ ggplot(aes(x=year, y= count, color= popn)) +
+  geom_point(aes(fill = popn))+
+   geom_line()+
+  labs(title = "Number of bears fasting each year (per population)")
 ```
 
 9. (8 points) Where are the polar bears used in this study located? Make a static (not leaflet) distribution map that shows the locations of  bears by population. (hint: use `color=popn` in the `aes()` of `geom_point()`)
@@ -229,8 +233,11 @@ ui <- fluidPage(
 server <- function(input, output, session) {
    output$plot <- renderPlot({
       polar_bears %>% 
-      ggplot(aes(y=un_creat_ratio,x=popn )+#had to give the graph an x value so i added that here
-      geom_boxplot(aes(fill = input$fill))#I needed to put the fill as the variable, so i put that down here as well as make the plot the correct plot (boxplot not bar/col)
+      ggplot(aes(x= popn,
+                 y= un_creat_ratio,
+                 fill= .data[[input$fill]]))+#had to give the graph an x value so i added that here
+      geom_boxplot(alpha=0.75)+#I needed to put the fill as the variable, so i put that down here as well as make the plot the correct plot (boxplot not bar/col)
+       labs(title = "Uncreat ratio in each population", x="Population", y="variable")
    })
 }
    
