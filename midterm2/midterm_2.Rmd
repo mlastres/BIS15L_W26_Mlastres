@@ -136,7 +136,10 @@ polar_bears<- polar_bears %>%
  polar_bears %>% 
  summarize(min_urea=min(urea_nitrogen),
             max_urea=max(urea_nitrogen),
-            mean_urea=mean(urea_nitrogen))
+            mean_urea=mean(urea_nitrogen),#here I forgot to add the mean min and maz of crearinine, added below
+           mean_creat=mean(creatinine),
+           max_creat=max(creatinine),
+           min_creat=min(creatinine))
 ```
 
 6. (3 points) As explained above, the ratio of `urea_nitrogen` to `creatinine` is used as an index of fasting. To calculate the ratio, we need to multiply `urea_nitrogen` by 0.466, then divide by `creatinine`. Create a new variable called `un_creat_ratio` that contains this calculation.
@@ -148,18 +151,21 @@ polar_bears<- polar_bears %>%
 7. (4 points) The authors of the study categorized bears as fasting if their `un_creat_ratio` was less than or equal to 10. Use `case_when()` to create a new variable called `fasting` that categorizes bears as fasting or not.
 
 ```{r}
-?case_when #i forgot how to use case when, but here is what amount are fasting or not fasting!
+#?case_when #i forgot how to use case when, but here is what amount are fasting or not fasting!
 ```
 
 ```{r}
-polar_bears %>% 
-  mutate(fasting= un_creat_ratio<=10) %>%
-  group_by(popn) %>% 
-count(fasting) 
-```
-```{r}
 #polar_bears %>% 
- # mutate(fasting=case_when(un_creat_ratio <=10))
+  #mutate(fasting= un_creat_ratio<=10) %>%
+  #group_by(popn) %>% 
+#count(fasting) 
+
+#this was my last ditch attempt to give you the data you were looking for oops
+```
+
+```{r}
+ polar_bears %>% #literally all i needed for this bit was a tilde, i added it in.. so sorry
+  mutate(fasting= case_when(un_creat_ratio <= 10~ "fasting"))
 ```
 
 
@@ -170,9 +176,9 @@ i couldnt figure out case_when, but this is what my graoh code MIGHT look like i
 ```{r}
 #polar_bears
 #select(fasting, year, popn) %>% 
- # ggplot(aes(x=year, y= fasting)) +
- # geom_col(aes(fill = popn), position = dodge)+
- # labs(title = "Number of bears fasting each year (per population)")
+ #ggplot(aes(x=year, y= fasting)) +
+  #geom_col(aes(fill = popn), position = dodge)+
+  #labs(title = "Number of bears fasting each year (per population)")
 ```
 
 9. (8 points) Where are the polar bears used in this study located? Make a static (not leaflet) distribution map that shows the locations of  bears by population. (hint: use `color=popn` in the `aes()` of `geom_point()`)
@@ -208,8 +214,8 @@ names(polar_bears)
 library(shiny)
  
 ui <- fluidPage(
-   selectInput("y",
-               "polar bear selection",
+   selectInput("fill",
+               "polar bear fill selection",
               choices = c("sex",
                           "mating",
                           "age_class",
@@ -223,8 +229,8 @@ ui <- fluidPage(
 server <- function(input, output, session) {
    output$plot <- renderPlot({
       polar_bears %>% 
-      ggplot(aes(x=un_creat_ratio,y= .data[[input$y]]))+
-      geom_bar()
+      ggplot(aes(y=un_creat_ratio,x=popn )+#had to give the graph an x value so i added that here
+      geom_boxplot(aes(fill = input$fill))#I needed to put the fill as the variable, so i put that down here as well as make the plot the correct plot (boxplot not bar/col)
    })
 }
    
