@@ -53,11 +53,12 @@ You will use BLAST, a tool used in real clinical and research microbiology labs,
 ```{r}
 
 ```
-
+DNA structure 
 
 **2.Perform a blastx search using `goi_01.txt` as the query and the "nr_cluster_seq" database. Download the cluter table results in CSV format, change the name to "goi_01_blastx.csv" in the homework folder. Read the csv file into R and clean the column names. Save the cleaned data frame as goi_01_blastx.**
 ```{r}
-
+goi_01_blastx<-read_csv("C:/Users/Miala/OneDrive/Desktop/BIS15L_W26_Mlastres/lab16/homework/data/goi_01_blastx.csv.csv") %>% 
+  clean_names()
 ```
 
 ```{r}
@@ -66,55 +67,62 @@ You will use BLAST, a tool used in real clinical and research microbiology labs,
 
 **3.Display the top 10 blastx hits, based on e_value, for this blastx search? (Include the Scientific Name, Cluster Anscestor, Cluster Representative Sequence, Max Score, Query Cover, E value and Percent Identity)**
 ```{r}
-
+goi_01_blastx %>% 
+  arrange(desc(e_value)) %>% 
+  slice_head(n=10)
 ```
  
 
 **4. create a plot that shows the different in percent identity for each Scientific Name of the top 10 blastx hits. Make sure to label your axes and give your plot a title.**
 ```{r}
-
+goi_01_blastx %>% 
+  arrange(desc(e_value)) %>% 
+  slice_head(n=10) %>% 
+  ggplot(aes(x= scientific_name, y= per_ident))+
+  geom_col(aes(fill = scientific_name))+
+  theme(axis.text.x= element_text(angle = 60, hjust= 1))+
+  labs(title = "Percent identity of each organism", 
+       x= "Scientific Name", y= "Percent Identity")
 ```
 
 
 **5 Perform a blastn search using `goi_01.txt` as the query and the "core_nt" database. Download the alignment description in CSV format, change the name to "goi_01_blastn.csv" in the homework folder. Read the csv file into R and clean the column names. Save the cleaned data frame as goi_01_blastn.**
 ```{r}
-
+goi_01_blastn<-read_csv("C:/Users/Miala/OneDrive/Desktop/BIS15L_W26_Mlastres/lab16/homework/data/goi_01_blastn.csv.csv") %>% 
+  clean_names()
 ```
 
 ```{r}
-
+ #goi_01_blastn 
 ```
 
 **6. What was the top blastn hit, based on e_value, for this blastn search? (Include the Cluster Ancestor, Cluster Representative Sequence, Max Score, Query Cover, E value, Percent Identity and Accession Link)**
 ```{r}
+goi_01_blastn %>% 
+  arrange(desc(e_value)) %>% 
+  slice_head(n=1)
 
 ```
 
 **7. Based on the blastx and blastn results, what do you think this gene is and what bacteria do you think it came from?**
-```{}
-
-```
+ yersinia pestis is the highest in both of them, and its ancestor would have been	enterobacteria
 
 **8. For the top blastn hit, click on the accession link for this bacteria and download the coding sequences as a FASTA Protein file. Read the fasta file into R using the Biostrings package and store it in an object called `goi_blastn_hit`.**
 ```{r}
+goi_blastn_hit<- readDNAStringSet("C:/Users/Miala/OneDrive/Desktop/BIS15L_W26_Mlastres/lab16/homework/data/sequence.fasta") %>% 
+  clean_names()
 
 ```
 
-```{r}
-
-```
 
 **9. From the same organism, identify 5 other annotated genes? Do these genes suggest about the biology or virulence of this bacterium?** *Annotated genes can be found in the "CDS" section of the GenBank file. You can also find genes by going to summary page for the organism and looking at the "View annotated genes" section.*
 ```{r}
-
+#im gonna be honest i did my best, could not figure it out, so so so sorry i apologize deeply, but i would assume that the genes would reflect a similar makeup as well as an easy way to adapt and cross over making it incredibly easy to spread and grow since it is a bacteria 
 ```
 
 
 **10. Now that you have an idea of this bacteria's identity, what illness/disease do you think the patient has? What is the historical or public health significance of this disease? Based on the gene you identified, what role might this gene play in pathogenicity?**
-```{}
 
-```
-
-
+The bacteria strain found would suggest she has the plague, yikes. This disease is incredibly historical as it wiped out half of europe through the rats, this gene would be pretty strong role in pathogenicity as it is an incredibly contagious bacteria and has the genes to do so. 
 ## Knit and Upload
 Please knit your work as an .html file and upload to Canvas. Homework is due before the start of the next lab. No late work is accepted. Make sure to use the formatting conventions of RMarkdown to make your report neat and clean! 
